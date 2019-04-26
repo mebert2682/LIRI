@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+var fs = require("fs");
+
 var axios = require("axios");
 
 var keys = require("./keys.js");
@@ -23,16 +25,25 @@ switch (request) {
   case "movie-this":
     searchMovie();
     break;
+  case "do-what-it-says":
+    doWhatItSays();
+    break;
 }
 
 function findConcerts() {
   
-  axios.get("https://rest.bandsintown.com/artists/" + query + "/events?app_id=codingbootcamp").then(
+  axios.get("https://rest.bandsintown.com/artists/" + query + "/events?app_id=codingbootcamp&date=upcoming").then(
   function(response) {
 
-    console.log(response);
     
+    for (i = 0; i < response.data; i++); 
+
     
+    //console.log(response.data[i]);
+
+    console.log(response.data[i].venue.name);
+    console.log(response.data[i].venue.city, response.data[i].venue.region, response.data[i].venue.country);
+    console.log(response.data[i].datetime);
     
     
   }
@@ -42,11 +53,20 @@ function findConcerts() {
 
 function searchSong() {
 
-spotify.search({ type: 'track', query: query }, function(err, data) {
+var searchTrack;
+
+if (!query) {
+  searchTrack = "Ace Of Base The Sign";
+} else {
+  searchTrack = query;
+}
+
+spotify.search({ type: 'track', query: searchTrack }, function(err, data) {
   if (err) {
     return console.log('Error occurred: ' + err);
   }
- 
+
+
 //console.log(data)
 console.log(data.tracks.items[0].artists[0].name)
 console.log(data.tracks.items[0].name)
@@ -58,7 +78,15 @@ console.log(data.tracks.items[0].preview_url)
 
 function searchMovie() {
 
-axios.get("http://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=trilogy").then(
+  var searchFilm;
+
+  if (!query) {
+    searchFilm = "Mr. Nobody";
+  } else {
+    searchFilm = query;
+  }
+
+  axios.get("http://www.omdbapi.com/?t=" + searchFilm + "&y=&plot=short&apikey=trilogy").then(
   function(response) {
 
     //console.log(response);
@@ -72,4 +100,12 @@ axios.get("http://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=trilogy"
     console.log("Actors: " + response.data.Actors);
   });
 
+}
+
+function doWhatItSays() {
+
+  fs.readFile('random.txt', 'utf8', function (error, query) {
+    console.log(query);
+    searchSong(query); 
+});
 }
