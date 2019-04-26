@@ -103,9 +103,23 @@ function searchMovie() {
 }
 
 function doWhatItSays() {
+fs.readFile("random.txt", "utf8", function(error, data) {
+  if (error) {
+    return console.log(error);
+  } else {
+    var dataArr = data.split(",");
+        request = dataArr[0];
+        query = dataArr[1];
 
-  fs.readFile('random.txt', 'utf8', function (error, query) {
-    console.log(query);
-    searchSong(query); 
+        if (request === "spotify-this-song") {
+          searchSong();
+        }
+
+};
+
 });
+
 }
+
+
+
